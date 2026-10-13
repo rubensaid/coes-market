@@ -15,9 +15,9 @@ CREATE TABLE IF NOT EXISTS semanas (
 -- CMg de la barra de referencia cada 30 min (fin del intervalo). estado: 0 confirmado, 1 preliminar
 CREATE TABLE IF NOT EXISTS cmg_ref (
     fecha_hora DATETIME NOT NULL PRIMARY KEY,
-    total DECIMAL(10,2) NULL,
-    energia DECIMAL(10,2) NULL,
-    congestion DECIMAL(10,2) NULL,
+    total DOUBLE NULL,
+    energia DOUBLE NULL,
+    congestion DOUBLE NULL,
     estado TINYINT NOT NULL DEFAULT 0,
     semana CHAR(8) NOT NULL,
     KEY idx_cmg_ref_semana (semana)
@@ -32,9 +32,9 @@ CREATE TABLE IF NOT EXISTS tipo_cambio (
 CREATE TABLE IF NOT EXISTS ahora_cmg (
     fecha_hora DATETIME NOT NULL,
     version SMALLINT NOT NULL,
-    cmg_total DECIMAL(10,2) NULL,
-    cmg_energia DECIMAL(10,2) NULL,
-    cmg_congestion DECIMAL(10,2) NULL,
+    cmg_total DOUBLE NULL,
+    cmg_energia DOUBLE NULL,
+    cmg_congestion DOUBLE NULL,
     correlativo INT NULL,
     extraido_en DATETIME NOT NULL,
     PRIMARY KEY (fecha_hora, version)
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS ahora_demanda (
     fecha_hora DATETIME NOT NULL,
     variable VARCHAR(20) NOT NULL,                  -- ejecutada, programa_diario
     version SMALLINT NOT NULL,
-    valor DECIMAL(10,2) NULL,
+    valor DOUBLE NULL,
     extraido_en DATETIME NOT NULL,
     PRIMARY KEY (fecha_hora, variable, version)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS ahora_demanda (
 -- Costo marginal programado (hoy y manana) en US$/MWh; se reemplaza en cada consulta
 CREATE TABLE IF NOT EXISTS ahora_programa (
     fecha_hora DATETIME NOT NULL PRIMARY KEY,
-    cmg_usd DECIMAL(10,2) NULL,
+    cmg_usd DOUBLE NULL,
     actualizado_en DATETIME NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

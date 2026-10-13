@@ -235,6 +235,13 @@ Plan: el procesamiento pesado sigue en Python y el hosting compartido solo recib
   (token, validacion, PDF, correo), `instalar.php` y `diagnostico.php` (con clave), `Correo` (PHPMailer SMTP).
   Probado de punta a punta con MariaDB, `php -S` y un SMTP de prueba: la semana de muestra subio, se guardo
   y llego el correo con el PDF adjunto. `php web/tests/run.php`: 27 pruebas.
+- Bloque 3: Ahora en PHP (`web/src/Ahora`, `Http`, `Xlsx`, `Bcrp`, `Rarezas`): procesos del dia, tabla por proceso,
+  demanda en vivo, versionado con tolerancia 1e-6, reconsulta de los ultimos 2 procesos, relleno de huecos de hasta
+  7 dias, Programa Diario (lector XLSX propio en streaming, sin PhpSpreadsheet), tipo de cambio BCRP, memoria del
+  precio (3 referencias, rarezas de 28 dias, salto brusco, lectura en palabras). Entradas: `bin/ahora.php` (cron
+  cada 30 min), `cron.php` (para cron por URL), `api/ahora.php`, `api/actualizar.php` (boton, maximo 1 vez cada
+  5 min). `php web/tests/run_db.php`: 46 pruebas con MariaDB y las muestras. No se pudo probar contra el COES real
+  desde el entorno de desarrollo (la red lo bloquea): las fallas se registran y no rompen nada.
 - Decision: MySQL guarda poco (paquete comprimido por semana, serie CMg de la barra de referencia,
   Ahora de esa barra); los textos salen de la narrativa Python, sin duplicar reglas en PHP.
 
