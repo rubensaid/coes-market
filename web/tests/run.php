@@ -4,7 +4,8 @@ declare(strict_types=1);
 // Pruebas de logica pura (sin base de datos): php tests/run.php
 require dirname(__DIR__) . '/src/autoload.php';
 
-use CuantoCoesta\{Fechas, Formato, Semanas};
+use CuantoCoesta\{Fechas, Formato, Semanas, Serie};
+use CuantoCoesta\Visual\{Graficos as G, Lienzo};
 
 $fallos = 0;
 $total = 0;
@@ -57,6 +58,51 @@ foreach (['no es gzip', gzencode('no es json'), gzencode('{"esquema":99,"semana"
     igual(true, $lanzo, "paquete invalido $i");
 }
 igual('2026-W40', Semanas::decodificar(gzencode('{"esquema":1,"semana":"2026-W40"}'))['semana'], 'paquete valido');
+
+// Marcas de ejes y graficos (humo: producen SVG valido, sin NaN ni INF)
+igual([0.0, 200.0, 400.0, 600.0, 800.0], Lienzo::marcas(0, 800, 4), 'marcas redondas');
+igual('#1565C0', G::color(['#1565C0', '#F28C1E'], 0.0), 'color inicial');
+igual('#F28C1E', G::color(['#1565C0', '#F28C1E'], 1.0), 'color final');
+$ts = [];
+$v = [];
+for ($i = 1; $i <= 96; $i++) {
+    $ts[] = date('Y-m-d H:i', strtotime('2026-10-01 00:00') + $i * 1800);
+    $v[] = 150 + 100 * sin($i / 8);
+}
+$svgs = [
+    'precio' => G::precioSemana(['ts' => $ts, 'valor' => $v], ['bajo' => 100, 'alto' => 500]),
+    'perfil' => G::perfilHorario(array_map(fn($h) => [$h, 100.0 + $h, $h > 3 ? 90.0 : null], range(0, 23))),
+    'demanda' => G::demanda(['ts' => $ts, 'ejecutada' => $v, 'prog_diaria' => $v]),
+    'generacion' => G::generacion(['ts' => $ts, 'tecnologias' => ['hidro' => $v, 'gas' => $v]]),
+    'mix' => G::mix(['gas' => 0.6, 'hidro' => 0.4], ['gas' => 0.5]),
+    'embalses' => G::embalses(['fecha' => ['2026-10-01', '2026-10-02'], 'valor' => [500.0, 510.0]]),
+    'ranking' => G::barrasHorizontales(['A', 'B'], [1.0, 2.0], [null, 1.5]),
+    'diaria' => G::evolucionDiaria([['fecha' => '2026-10-01', 'promedio' => 200.0, 'minimo' => 100.0, 'maximo' => 300.0, 'punta' => 250.0, 'confirmado' => true],
+        ['fecha' => '2026-10-04', 'promedio' => 210.0, 'minimo' => 110.0, 'maximo' => 310.0, 'punta' => null, 'confirmado' => false]]),
+    'calor' => G::mapaCalor(['fechas' => ['2026-10-01'], 'filas' => [array_map(fn($i) => $i % 5 ? 100.0 + $i : null, range(0, 47))]]),
+    'mensual' => G::mensualBarras([['mes' => '2026-09', 'promedio' => 200.0, 'punta' => 300.0], ['mes' => '2026-10', 'promedio' => 210.0, 'punta' => null]]),
+    'central' => G::generacionCentral($ts, $v),
+    'indisp' => G::indisponibilidad([['fecha' => '2026-10-01', 'programado' => 10.0, 'forzado' => 5.0]]),
+    'vacio' => G::precioSemana(['ts' => [], 'valor' => []], ['alto' => 500]),
+];
+foreach ($svgs as $nombre => $svg) {
+    igual(true, str_starts_with($svg, '<svg') && str_ends_with($svg, '</svg>') && !preg_match('/NAN|INF|nan|inf(?!o)/', $svg), "grafico $nombre valido");
+}
+
+// Serie continua con datos sinteticos
+$serie = [];
+foreach ($ts as $i => $t) {
+    $serie[] = ['fh' => $t, 'fecha' => Serie::fechaDe($t), 'total' => $v[$i], 'energia' => $v[$i], 'congestion' => 0.0, 'estado' => $i < 48 ? 0 : 1];
+}
+igual('2026-10-01', Serie::fechaDe('2026-10-02 00:00'), 'fin de intervalo 00:00 es del dia anterior');
+igual(true, Serie::esPunta('2026-10-01 19:00') && !Serie::esPunta('2026-10-01 23:30') && Serie::esPunta('2026-10-01 23:00'), 'punta 18:00 a 23:00 por hora de inicio');
+$resumen = Serie::resumir($serie, '2026-10-01', '2026-10-02');
+igual(96, array_sum($resumen['estados']), 'resumen cuenta estados');
+igual(1, $resumen['dias_preliminares'], 'dias preliminares');
+igual(2, count(Serie::diario($serie)), 'diario');
+igual(48, count(Serie::matrizCalor($serie)['filas'][0]), 'matriz de 48 columnas');
+igual(1, count(Serie::mensual($serie)), 'mensual');
+igual('2026-W41', Fechas::semanaIso(Fechas::fecha('2026-10-07')), 'semana iso');
 
 echo ($fallos === 0 ? "OK" : "FALLARON $fallos") . " ($total pruebas)\n";
 exit($fallos === 0 ? 0 : 1);

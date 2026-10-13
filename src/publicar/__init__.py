@@ -72,9 +72,18 @@ def _indicadores(r):
 
 
 def _hechos(r, narrativa):
-    return [{"tipo": h.tipo, "clave": h.clave, "categoria": CATEGORIA_HECHO.get(h.clave, ""),
+    return [{"tipo": h.tipo, "clave": h.clave, "categoria": CATEGORIA_HECHO.get(h.clave, ""), "sentido": _sentido(h),
              "titular": titular, "explicacion": explicar_hecho(h, r)}
             for h, titular in zip(r.hechos, narrativa.titulares)]
+
+
+def _sentido(h):
+    """Direccion del hecho para el icono del sitio: sube/baja (variacion, anomalia) o max/min (record)."""
+    if h.tipo == "variacion":
+        return "sube" if h.datos["var"] > 0 else "baja"
+    if h.tipo == "anomalia":
+        return "sube" if h.datos["razon"] > 1 else "baja"
+    return h.datos.get("sentido", "")
 
 
 def _series_semana(r):

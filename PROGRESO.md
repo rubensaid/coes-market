@@ -242,6 +242,15 @@ Plan: el procesamiento pesado sigue en Python y el hosting compartido solo recib
   cada 30 min), `cron.php` (para cron por URL), `api/ahora.php`, `api/actualizar.php` (boton, maximo 1 vez cada
   5 min). `php web/tests/run_db.php`: 46 pruebas con MariaDB y las muestras. No se pudo probar contra el COES real
   desde el entorno de desarrollo (la red lo bloquea): las fallas se registran y no rompen nada.
+- Bloques 4 a 6: sitio web PHP. Graficos SVG propios (`web/src/Visual`: los 16 tipos de src/visual, con hover por
+  JS, sin GD ni librerias), serie continua (`Serie`: base/punta/fuera de punta, diario, mensual, mapa de calor,
+  USD con BCRP, Excel .xlsx sin librerias), las 12 secciones de la app de escritorio (Resumen, Ahora, Evolucion,
+  Precios, Demanda, Generacion, Embalses, Eventos, Centrales, Mapa, Fuentes, Glosario) mas lo propio del dashboard
+  Streamlit ("Sobre el proyecto", desplegables "Que significa esto?", banner de preliminar) en `web/src/Vistas`,
+  `admin.php` (reenviar PDF, probar correo, consultar Ahora, borrar semanas), `descargar.php` (PDF y Excel).
+  Revisado en Chromium a 1360 y 390 px de ancho: sin desbordes ni errores de JS. `php web/tests/run.php`: 51 pruebas.
+  Lo que no existe en la web, por diseno: el boton "Actualizar" de Resumen (bajar la semana la hace Python) y
+  "Generar PDF" (el PDF llega ya hecho desde Python).
 - Decision: MySQL guarda poco (paquete comprimido por semana, serie CMg de la barra de referencia,
   Ahora de esa barra); los textos salen de la narrativa Python, sin duplicar reglas en PHP.
 

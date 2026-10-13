@@ -145,4 +145,61 @@ final class Xlsx
         $lector->close();
         return $filas;
     }
+
+    /**
+     * Escribe un .xlsx sencillo (texto y numeros) sin librerias. @param array<string, array<int, array<int, mixed>>> $hojas nombre => filas
+     * @return string contenido del archivo
+     */
+    public static function escribir(array $hojas): string
+    {
+        $tmp = tempnam(sys_get_temp_dir(), 'xlsx');
+        $zip = new \ZipArchive();
+        $zip->open($tmp, \ZipArchive::OVERWRITE);
+        $ns = 'xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"';
+        $tipos = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+            . '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>'
+            . '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>';
+        $libro = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook ' . $ns . ' xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>';
+        $rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">';
+        $i = 0;
+        foreach ($hojas as $nombre => $filas) {
+            $i++;
+            $tipos .= '<Override PartName="/xl/worksheets/sheet' . $i . '.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';
+            $libro .= '<sheet name="' . htmlspecialchars(mb_substr($nombre, 0, 31), ENT_XML1) . '" sheetId="' . $i . '" r:id="rId' . $i . '"/>';
+            $rels .= '<Relationship Id="rId' . $i . '" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' . $i . '.xml"/>';
+            $xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet ' . $ns . '><sheetData>';
+            foreach ($filas as $r => $fila) {
+                $xml .= '<row r="' . ($r + 1) . '">';
+                foreach (array_values($fila) as $c => $v) {
+                    $ref = self::letraColumna($c) . ($r + 1);
+                    if ($v === null || $v === '') {
+                        continue;
+                    }
+                    $xml .= is_int($v) || is_float($v)
+                        ? '<c r="' . $ref . '"><v>' . (is_float($v) ? rtrim(rtrim(number_format($v, 6, '.', ''), '0'), '.') : $v) . '</v></c>'
+                        : '<c r="' . $ref . '" t="inlineStr"><is><t>' . htmlspecialchars((string)$v, ENT_XML1) . '</t></is></c>';
+                }
+                $xml .= '</row>';
+            }
+            $zip->addFromString("xl/worksheets/sheet$i.xml", $xml . '</sheetData></worksheet>');
+        }
+        $zip->addFromString('[Content_Types].xml', $tipos . '</Types>');
+        $zip->addFromString('_rels/.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+            . '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>');
+        $zip->addFromString('xl/workbook.xml', $libro . '</sheets></workbook>');
+        $zip->addFromString('xl/_rels/workbook.xml.rels', $rels . '</Relationships>');
+        $zip->close();
+        $contenido = (string)file_get_contents($tmp);
+        @unlink($tmp);
+        return $contenido;
+    }
+
+    private static function letraColumna(int $i): string
+    {
+        $s = '';
+        for ($n = $i + 1; $n > 0; $n = intdiv($n - 1, 26)) {
+            $s = chr(65 + ($n - 1) % 26) . $s;
+        }
+        return $s;
+    }
 }
