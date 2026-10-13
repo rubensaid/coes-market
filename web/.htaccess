@@ -1,0 +1,36 @@
+# Cuanto COESta en cPanel: seguridad y cabeceras basicas
+Options -Indexes
+DirectoryIndex index.php
+
+# Apache en cPanel a veces no entrega la cabecera Authorization a PHP
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+
+# Nunca servir configuracion ni codigo
+<FilesMatch "\.(sql|md|json|php\.bak|log|lock|gz)$">
+<IfModule mod_authz_core.c>
+Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+Order deny,allow
+Deny from all
+</IfModule>
+</FilesMatch>
+<FilesMatch "^(composer\.(json|lock))$">
+<IfModule mod_authz_core.c>
+Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+Order deny,allow
+Deny from all
+</IfModule>
+</FilesMatch>
+<IfModule mod_headers.c>
+Header set X-Content-Type-Options "nosniff"
+Header set Referrer-Policy "same-origin"
+</IfModule>
+<IfModule mod_php.c>
+php_flag display_errors off
+</IfModule>

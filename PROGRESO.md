@@ -227,9 +227,14 @@ Base: ANALISIS_GERENCIAL_2026-10-11.md (usuario objetivo: generadora; PC de la e
 Plan: el procesamiento pesado sigue en Python y el hosting compartido solo recibe resultados.
 - Bloque 1: `src/publicar/` arma un paquete JSON por semana (indicadores, hechos, narrativa,
   series, mapa, eventos, centrales, evolucion, fuentes) y lo sube comprimido a
-  `web/public/api/recibir.php` con un token (variables COESTA_HOSTING_URL y COESTA_HOSTING_TOKEN).
+  `web/api/recibir.php` con un token (variables COESTA_HOSTING_URL y COESTA_HOSTING_TOKEN).
   `python -m src.publicar --semana 2026-W40`, `run_weekly.py --pdf --publicar`,
   `python -m src.publicar --config-web` (exporta config y recursos a web/). 82 tests en verde.
+- Bloque 2: `web/` base (PHP 8.1+, sin Composer en el servidor): autoload, Config, Db (hora Peru
+  -05:00 en la sesion MySQL), Fechas y Formato (equivalen a src/utils), esquema MySQL, `api/recibir.php`
+  (token, validacion, PDF, correo), `instalar.php` y `diagnostico.php` (con clave), `Correo` (PHPMailer SMTP).
+  Probado de punta a punta con MariaDB, `php -S` y un SMTP de prueba: la semana de muestra subio, se guardo
+  y llego el correo con el PDF adjunto. `php web/tests/run.php`: 27 pruebas.
 - Decision: MySQL guarda poco (paquete comprimido por semana, serie CMg de la barra de referencia,
   Ahora de esa barra); los textos salen de la narrativa Python, sin duplicar reglas en PHP.
 

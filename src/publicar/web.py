@@ -38,7 +38,7 @@ def exportar_config(destino=None):
 
 def exportar_recursos(destino=None):
     """Copia fuentes, mapa del Peru y coordenadas de barras a web/public/assets."""
-    destino = Path(destino or RAIZ_WEB / "public" / "assets")
+    destino = Path(destino or RAIZ_WEB / "assets")
     (destino / "fuentes").mkdir(parents=True, exist_ok=True)
     for ttf in (config.RAIZ / "assets" / "fuentes").glob("*"):
         shutil.copy(ttf, destino / "fuentes" / ttf.name)

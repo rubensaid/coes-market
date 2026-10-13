@@ -1,0 +1,6 @@
+{
+  "name": "cuanto-coesta/web",
+  "description": "Sitio PHP de Cuanto COESta para hosting compartido (cPanel)",
+  "require": { "php": ">=8.1", "phpmailer/phpmailer": "^6.9" },
+  "config": { "optimize-autoloader": true }
+}

@@ -46,7 +46,7 @@ def subir(semana, paquete_gz: bytes, ruta_pdf=None, enviar_correo=True, url=None
         try:
             resp = sesion.post(f"{url}/api/recibir.php", files=archivos, timeout=TIMEOUT,
                                data={"semana": semana, "enviar_correo": "1" if enviar_correo else "0"},
-                               headers={"Authorization": f"Bearer {token}"})
+                               headers={"Authorization": f"Bearer {token}", "X-Coesta-Token": token})
             if resp.status_code == 200:
                 return resp.json()
             if resp.status_code in (400, 401, 403, 413):
