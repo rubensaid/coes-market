@@ -6,6 +6,7 @@ Uso:
   python run_weekly.py --semana 2026-W40
   python run_weekly.py --historico 8        # ademas baja las 8 semanas previas (para records)
   python run_weekly.py --sin-descarga       # solo recalcula con lo que ya hay en data/raw
+  python run_weekly.py --pdf --publicar     # ademas sube la semana (y el PDF por correo) al sitio PHP del hosting
 
 El PDF es una opcion: la app de escritorio lo genera con un boton y el workflow de
 GitHub lo pide con --pdf. Nunca falla por datos incompletos: si el COES aun no
@@ -32,7 +33,7 @@ def semanas_a_preparar(semana, historico):
     return previas + [misma_semana_anio_anterior(semana), semana]
 
 
-def correr(semana, historico=1, descargar=True, pdf=False):
+def correr(semana, historico=1, descargar=True, pdf=False, publicar=False, enviar_correo=True):
     """Corre el pipeline para una semana. Devuelve la ruta del PDF si se pidio, o None."""
     semanas = semanas_a_preparar(semana, historico)
     cliente = ClienteCoes()
@@ -53,6 +54,11 @@ def correr(semana, historico=1, descargar=True, pdf=False):
         from src.report import generar_pdf
         ruta_pdf = generar_pdf(semana)
 
+    if publicar:
+        from src.publicar.__main__ import publicar as subir_semana
+        respuesta = subir_semana(semana, con_pdf=pdf, enviar_correo=enviar_correo)
+        print(f"Hosting: {respuesta}")
+
     print(f"\n{resumen.texto_semana} ({semana}){'  [PRELIMINAR]' if resumen.es_preliminar else ''}")
     for titular in narrativa.titulares:
         print(f"  * {titular}")
@@ -71,11 +77,13 @@ def main(argv=None):
     parser.add_argument("--historico", type=int, default=1, help="semanas previas a bajar (max 8 recomendado)")
     parser.add_argument("--sin-descarga", action="store_true")
     parser.add_argument("--pdf", action="store_true", help="genera tambien el PDF semanal")
+    parser.add_argument("--publicar", action="store_true", help="sube la semana al sitio PHP (cPanel)")
+    parser.add_argument("--sin-correo", action="store_true", help="con --publicar: no enviar el PDF por correo")
     args = parser.parse_args(argv)
     configurar_logging()
     semana = args.semana or ultima_semana_completa()
     try:
-        correr(semana, args.historico, not args.sin_descarga, args.pdf)
+        correr(semana, args.historico, not args.sin_descarga, args.pdf, args.publicar, not args.sin_correo)
     except Exception:
         log.exception("El pipeline no pudo procesar %s", semana)
         return 1

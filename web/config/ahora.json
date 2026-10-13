@@ -1,0 +1,49 @@
+{
+ "portal": "https://www.coes.org.pe/Portal",
+ "cliente": {
+  "user_agent": "CuantoCOESta/0.3 (bot open source; data publica COES)",
+  "pausa_segundos": 2.0,
+  "timeout_segundos": 180,
+  "reintentos": 3
+ },
+ "barra_referencia": "SANTA ROSA 220",
+ "ahora": {
+  "cada_minutos": 30,
+  "costo_marginal": {
+   "descripcion": "Costo marginal en tiempo real por barra (>= 138 kV), un proceso cada 30 min",
+   "frecuencia_objetivo": "30 minutos",
+   "retraso_esperado": "~30 minutos",
+   "estado_dato": "preliminar",
+   "url_fuente": "https://www.coes.org.pe/Portal/mercadomayorista/costosmarginales",
+   "url_procesos": "/mercadomayorista/costosmarginales/listaproceso",
+   "url_lista": "/mercadomayorista/costosmarginales/lista",
+   "defecto": "S",
+   "revisar_ultimos": 2
+  },
+  "demanda": {
+   "descripcion": "Demanda ejecutada del SEIN y programa del dia, cada 30 min",
+   "frecuencia_objetivo": "30 minutos",
+   "retraso_esperado": "~1 minuto",
+   "estado_dato": "preliminar",
+   "url_fuente": "https://www.coes.org.pe/Portal/portalinformacion/demanda",
+   "url": "/portalinformacion/Demanda"
+  }
+ },
+ "meses_ieod": [
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Setiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre"
+ ],
+ "programa": {
+  "ruta_visor": "Operación/Programa de Operación/Programa Diario/{anio}/{mes}_{MES}/Día {dia}/Anexo1_Despacho_{aaaammdd}.xlsx"
+ }
+}

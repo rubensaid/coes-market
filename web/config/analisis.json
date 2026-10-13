@@ -1,0 +1,28 @@
+{
+ "barra_referencia": "SANTA ROSA 220",
+ "umbrales_precio": {
+  "bajo": 100,
+  "alto": 500
+ },
+ "relevancia": {
+  "cmg_promedio": 0.1,
+  "demanda_maxima": 0.03,
+  "energia_semana": 0.03,
+  "participacion_renovable": 0.03,
+  "volumen_embalses": 0.05
+ },
+ "semanas_minimas_para_record": 4,
+ "rarezas": {
+  "dias_historia": 28,
+  "minimo_observaciones": 14,
+  "margen_rango": 0.1,
+  "diferencia_minima": 60,
+  "salto_intervalo_pct": 0.4,
+  "salto_intervalo_min": 120
+ },
+ "bloques": {
+  "punta_desde": 18,
+  "punta_hasta": 23
+ },
+ "mes_inicio_ano_hidrologico": 11
+}

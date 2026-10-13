@@ -1,0 +1,87 @@
+{
+ "nombre": "Cuánto COESta",
+ "slug": "cuanto-coesta",
+ "tagline": "El sistema eléctrico peruano, explicado al toque",
+ "version": "0.5.0",
+ "repositorio": "https://github.com/jmanguloc-boop/cuanto-coesta",
+ "aviso": "Proyecto independiente, no afiliado al COES. Usa datos públicos del portal www.coes.org.pe, que pueden ser preliminares y cambiar después.\n",
+ "paleta": {
+  "marino": "#0E2A47",
+  "azul": "#1565C0",
+  "celeste": "#E3EEFA",
+  "azul_claro": "#7FB8F0",
+  "naranja": "#F28C1E",
+  "naranja_texto": "#B04F00",
+  "tinta": "#0E2A47",
+  "papel": "#F4F7FB",
+  "blanco": "#FFFFFF",
+  "lima": "#F28C1E",
+  "verde": "#1565C0",
+  "gris": "#5B6B7D",
+  "linea": "#D5DFEA",
+  "cobre": "#F28C1E",
+  "mineral": "#16375A",
+  "primario": "#0E2A47",
+  "secundario": "#1565C0",
+  "acento": "#F28C1E",
+  "fondo": "#F4F7FB",
+  "fondo_suave": "#FFFFFF",
+  "texto": "#0E2A47",
+  "texto_suave": "#5B6B7D",
+  "sube": "#B23A22",
+  "baja": "#1E7A50"
+ },
+ "tipografia": {
+  "titulares": "Plus Jakarta Sans",
+  "texto": "Plus Jakarta Sans",
+  "mono": "Plus Jakarta Sans"
+ },
+ "tecnologias": {
+  "hidro": {
+   "nombre": "Hidroeléctrica",
+   "color": "#2F80D1"
+  },
+  "gas": {
+   "nombre": "Gas natural",
+   "color": "#F2A33A"
+  },
+  "solar": {
+   "nombre": "Solar",
+   "color": "#F5C518"
+  },
+  "eolica": {
+   "nombre": "Eólica",
+   "color": "#2BB3A3"
+  },
+  "diesel": {
+   "nombre": "Diésel y residual",
+   "color": "#4A5563"
+  },
+  "carbon": {
+   "nombre": "Carbón",
+   "color": "#7A5235"
+  },
+  "biomasa": {
+   "nombre": "Biomasa",
+   "color": "#6FA84B"
+  },
+  "termica": {
+   "nombre": "Térmica",
+   "color": "#F2A33A"
+  },
+  "otros": {
+   "nombre": "Otros",
+   "color": "#B9C7D6"
+  }
+ },
+ "orden_tecnologias": [
+  "hidro",
+  "gas",
+  "eolica",
+  "solar",
+  "biomasa",
+  "carbon",
+  "diesel",
+  "otros"
+ ]
+}

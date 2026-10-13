@@ -223,6 +223,16 @@ Base: ANALISIS_GERENCIAL_2026-10-11.md (usuario objetivo: generadora; PC de la e
   Trujillo, Socabaya), programado vs real y "manana se espera" en Ahora.
 - Version visible (0.5.0). 73 tests en verde.
 
+### Despliegue en cPanel (PHP + MySQL), 2026-10-13
+Plan: el procesamiento pesado sigue en Python y el hosting compartido solo recibe resultados.
+- Bloque 1: `src/publicar/` arma un paquete JSON por semana (indicadores, hechos, narrativa,
+  series, mapa, eventos, centrales, evolucion, fuentes) y lo sube comprimido a
+  `web/public/api/recibir.php` con un token (variables COESTA_HOSTING_URL y COESTA_HOSTING_TOKEN).
+  `python -m src.publicar --semana 2026-W40`, `run_weekly.py --pdf --publicar`,
+  `python -m src.publicar --config-web` (exporta config y recursos a web/). 82 tests en verde.
+- Decision: MySQL guarda poco (paquete comprimido por semana, serie CMg de la barra de referencia,
+  Ahora de esa barra); los textos salen de la narrativa Python, sin duplicar reglas en PHP.
+
 ## Decisiones
 
 - **Carpeta del proyecto**: se mantiene en `Desktop/pulso-electrico-peru` en lugar
