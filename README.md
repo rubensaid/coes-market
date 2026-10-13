@@ -155,6 +155,19 @@ si algún día quieres publicarlo en internet con
 [Streamlit Community Cloud](https://share.streamlit.io): repositorio `cuanto-coesta`,
 rama `main`, archivo `app/streamlit_app.py`, Python 3.12.
 
+## Sitio web en un hosting compartido (cPanel, PHP y MySQL)
+
+Además de la app de escritorio, el proyecto trae un sitio PHP (`web/`) pensado para un hosting compartido con cPanel,
+sin Python ni SSH en el servidor. Python hace el trabajo pesado (descargas, indicadores, textos y PDF) y sube un resumen
+comprimido; PHP muestra las 12 secciones (con gráficos SVG propios), consulta "Ahora" cada 30 minutos con un cron y
+**envía el PDF semanal a tu correo** por SMTP.
+
+- Publicar una semana: `python run_weekly.py --pdf --publicar` o `python -m src.publicar --semana 2026-W40`.
+- Empaquetar el sitio: `python tools/empaquetar_web.py` (crea `dist/cuanto-coesta-web.zip`).
+- Guía completa paso a paso: [DESPLIEGUE_CPANEL.md](DESPLIEGUE_CPANEL.md).
+
+El sitio lleva el aviso de que el proyecto es independiente y no está afiliado al COES.
+
 ## Cambiar el nombre o los colores
 
 Nombre, slug, tagline, paleta y tipografías viven en [`config/proyecto.yaml`](config/proyecto.yaml).

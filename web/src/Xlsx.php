@@ -103,7 +103,7 @@ final class Xlsx
             $texto = (string)$nodo->t;
         }
         foreach ($nodo->r ?? [] as $run) {
-            $texto .= (string)$run->t;   // texto con formato: se concatenan los tramos (no las notas fonéticas)
+            $texto .= (string)$run->t;   // texto con formato: se concatenan los tramos (no las notas foneticas)
         }
         return $texto;
     }

@@ -21,6 +21,10 @@ jobs:
   semanal:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      # Opcionales: si existen, la semana se publica tambien en el sitio PHP del hosting (cPanel)
+      COESTA_HOSTING_URL: ${{ secrets.COESTA_HOSTING_URL }}
+      COESTA_HOSTING_TOKEN: ${{ secrets.COESTA_HOSTING_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -58,6 +62,13 @@ jobs:
           SEMANA=$(basename "$RUTA" .pdf | sed 's/.*_//')
           echo "ruta=$RUTA" >> "$GITHUB_OUTPUT"
           echo "semana=$SEMANA" >> "$GITHUB_OUTPUT"
+
+      # Sube el resumen de la semana y el PDF al hosting; el sitio PHP envia el PDF por correo.
+      # Si falla, el resto del flujo sigue (se puede repetir con: python -m src.publicar --semana AAAA-Www)
+      - name: Publicar en el hosting (cPanel)
+        if: ${{ env.COESTA_HOSTING_URL != '' }}
+        continue-on-error: true
+        run: python -m src.publicar --semana "${{ steps.pdf.outputs.semana }}"
 
       - name: Guardar datos procesados para el dashboard
         run: |

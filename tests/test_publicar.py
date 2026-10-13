@@ -12,7 +12,7 @@ from tests.conftest import SEMANA_MUESTRA
 @pytest.fixture(scope="module")
 def datos(processed_muestra, tmp_path_factory):
     raiz, _, _ = processed_muestra
-    return paquete(SEMANA_MUESTRA, raiz, tmp_path_factory.mktemp("ahora") / "ahora.sqlite")
+    return paquete(SEMANA_MUESTRA, raiz, tmp_path_factory.mktemp("ahora") / "ahora.sqlite", tipo_cambio_de_red=False)
 
 
 def test_estructura_basica(datos):
@@ -106,3 +106,14 @@ def test_exportar_config_web(tmp_path):
     from src.publicar import web
     assert "glosario" in web.exportar_config(tmp_path)
     assert json.loads((tmp_path / "proyecto.json").read_text(encoding="utf-8"))["slug"]
+
+
+def test_empaquetado_excluye_secretos_y_pruebas(tmp_path):
+    import zipfile
+    from tools import empaquetar_web as emp
+    n = emp.empaquetar(tmp_path / "web.zip")
+    nombres = zipfile.ZipFile(tmp_path / "web.zip").namelist()
+    assert n == len(nombres) > 20
+    assert "coesta/index.php" in nombres and "coesta/api/recibir.php" in nombres and "coesta/vendor/autoload.php" in nombres
+    assert not any(x.endswith("local.php") or "/tests/" in x or x.endswith(".pdf") for x in nombres)
+    assert "coesta/config/local.ejemplo.php" in nombres and "coesta/config/glosario.json" in nombres

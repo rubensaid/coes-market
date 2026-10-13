@@ -23,7 +23,7 @@ final class Correo
         $p = Config::proyecto();
         $url = rtrim((string)(Config::local()['url_sitio'] ?? ''), '/');
         $asunto = $p['nombre'] . ': ' . ($datos['texto_semana'] ?? $semana) . ($datos['es_preliminar'] ?? false ? ' (preliminar)' : '');
-        $lineas = ['Hola,', '', 'Adjunto el reporte semanal. ' . ($datos['texto_semana'] ?? $semana) . '.', ''];
+        $lineas = ['Hola,', '', 'Te dejo el reporte de la semana en PDF. ' . ($datos['texto_semana'] ?? $semana) . '.', ''];
         if (!empty($datos['es_preliminar'])) {
             $lineas[] = 'Ojo: es preliminar. Hoy solo hay ' . (int)($datos['dias_con_datos'] ?? 0) . ' de 7 días con datos completos.';
             $lineas[] = '';

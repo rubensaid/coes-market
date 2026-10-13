@@ -185,10 +185,11 @@ def _evolucion(r, raiz=None, ruta_db=None):
     }
 
 
-def _tipo_cambio(r):
+def _tipo_cambio(r, de_red=True):
+    """Tipo de cambio de los dias de la semana (BCRP). Sin red, usa lo que haya en cache."""
     from src.extract import bcrp
     try:
-        tabla = bcrp.leer_cache()
+        tabla = bcrp.actualizar(r.desde, r.hasta) if de_red else bcrp.leer_cache()
     except Exception:
         return {}
     if tabla.empty:
@@ -219,7 +220,7 @@ def _fuentes():
 
 # ---------- paquete ----------
 
-def paquete(semana, raiz=None, ruta_db=None) -> dict:
+def paquete(semana, raiz=None, ruta_db=None, tipo_cambio_de_red=True) -> dict:
     """Todo lo que el sitio PHP necesita para mostrar una semana."""
     r = calcular_resumen(semana, raiz)
     narrativa = generar_narrativa(r)
@@ -243,7 +244,7 @@ def paquete(semana, raiz=None, ruta_db=None) -> dict:
         "rarezas": {"n": r.n_rarezas, "top": r.rarezas}, "revision": r.revision, "avisos": r.avisos,
         "eventos": _eventos(r, ref, raiz),
         "centrales": _centrales(r, raiz, ruta_db),
-        "evolucion": evolucion, "tipo_cambio": _tipo_cambio(r),
+        "evolucion": evolucion, "tipo_cambio": _tipo_cambio(r, tipo_cambio_de_red),
         "fuentes": _fuentes(),
     }
     return limpiar(datos)

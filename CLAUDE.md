@@ -10,6 +10,7 @@ Productos:
 2. "Ahora": costo marginal y demanda cada 30 min con versiones (src/ahora, SQLite)
 3. PDF semanal apaisado, OPCIONAL (boton en la app o run_weekly.py --pdf)
 4. Dashboard Streamlit (app/streamlit_app.py), opcional para publicar en la web
+5. Sitio PHP + MySQL para hosting compartido con cPanel (web/), con envio del PDF por correo (DESPLIEGUE_CPANEL.md)
 
 Publico: desde analistas del sector hasta alguien que no sabe nada de
 electricidad. Si un dato no se entiende sin contexto, esta mal hecho.
@@ -46,7 +47,10 @@ electricidad. Si un dato no se entiende sin contexto, esta mal hecho.
 - assets/         fuentes OFL (Barlow, Barlow Condensed, IBM Plex Mono) y mapa del Peru
 - src/utils/      config, logging, fechas, formato
 - app/streamlit_app.py   dashboard
-- run_weekly.py   pipeline completo
+- run_weekly.py   pipeline completo (con --publicar sube la semana al sitio PHP)
+- src/publicar/   paquete JSON semanal, subida al hosting y exportacion de config a web/ (`python -m src.publicar`)
+- web/            sitio PHP 8.1+ (index.php, api/, bin/ahora.php, src/, vendor/ con PHPMailer, sql/schema.sql)
+- tools/empaquetar_web.py   arma el zip para subir por FTP
 - docs/fuentes_coes.md, docs/diccionario_datos.md
 
 ## Comandos (Windows)
@@ -54,5 +58,13 @@ electricidad. Si un dato no se entiende sin contexto, esta mal hecho.
 - `.venv\Scripts\python run_weekly.py [--semana 2026-W40] [--pdf]`
 - `.venv\Scripts\python run_ahora.py [--bucle]`
 - `.venv\Scripts\python app\escritorio.py`
+- `.venv\Scripts\python -m src.publicar --semana 2026-W40` (sube al hosting; ver COESTA_HOSTING_URL y COESTA_HOSTING_TOKEN)
+- `php web/tests/run.php` y `php web/tests/run_db.php` (pruebas del sitio PHP; la segunda usa una base de pruebas MySQL)
+
+## Sitio PHP (web/)
+- Python calcula y narra; PHP solo muestra, consulta "Ahora" y envia el correo. No duplicar reglas de la narrativa en PHP.
+- config/*.yaml sigue siendo la fuente unica: `python -m src.publicar --config-web` la exporta a web/config/*.json.
+- Hora de Peru fija UTC-5 en PHP y en la sesion MySQL. Sin PhpSpreadsheet (memoria): lector y escritor XLSX propios.
+- Secretos solo en web/config/local.php (fuera de git). Los tests PHP no tocan la base real.
 
 Estado y decisiones: PROGRESO.md

@@ -251,6 +251,14 @@ Plan: el procesamiento pesado sigue en Python y el hosting compartido solo recib
   Revisado en Chromium a 1360 y 390 px de ancho: sin desbordes ni errores de JS. `php web/tests/run.php`: 51 pruebas.
   Lo que no existe en la web, por diseno: el boton "Actualizar" de Resumen (bajar la semana la hace Python) y
   "Generar PDF" (el PDF llega ya hecho desde Python).
+- Bloque 7: workflow semanal con paso opcional "Publicar en el hosting" (secretos COESTA_HOSTING_URL y
+  COESTA_HOSTING_TOKEN), `tools/empaquetar_web.py` (zip de 600 KB sin secretos ni pruebas), `clave.php`,
+  DESPLIEGUE_CPANEL.md, README y CLAUDE.md. Probado desde un zip recien descomprimido: instala, recibe la semana
+  de muestra, muestra el sitio y envia el correo con el PDF. 83 tests de Python, 51 + 46 de PHP en verde.
+- Pendiente para el usuario: probar en su hosting real (el entorno de desarrollo no llega a coes.org.pe, asi que
+  la consulta de "Ahora" y del Programa Diario se probo con las muestras y un cliente HTTP falso), crear los
+  secretos en GitHub y el cron de 30 minutos. El texto del correo se pulio a mano (plantilla en
+  web/src/Correo.php, funcion redactar).
 - Decision: MySQL guarda poco (paquete comprimido por semana, serie CMg de la barra de referencia,
   Ahora de esa barra); los textos salen de la narrativa Python, sin duplicar reglas en PHP.
 

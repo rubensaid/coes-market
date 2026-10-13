@@ -95,7 +95,7 @@ final class Ui
         return '<header class="cabecera"><h1>' . self::h($titulo) . '</h1><p>' . self::h($subtitulo) . '</p></header>';
     }
 
-    /** Desplegable "¿Qué significa esto?" con tres niveles (lectura rapida, por que importa, para imaginarlo, nota tecnica). */
+    /** Desplegable "Que significa esto" con varios niveles (lectura rapida, por que importa, para imaginarlo, nota tecnica). */
     public static function queSignifica(?array $paquete, string $clave): string
     {
         $g = Config::glosario()['indicadores'][$clave] ?? null;

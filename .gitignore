@@ -15,3 +15,4 @@ diagnostico_conexion.txt
 wheels/
 data/tipo_cambio.csv
 config/interno.yaml
+dist/
